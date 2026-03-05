@@ -2,88 +2,53 @@
   "_comment": "oh-my-openclaw configuration file. Change models, tool restrictions, and skill triggers per category here.",
   "categories": {
     "quick": {
-      "model": "gpt-5.2-codex",
+      "model": "claude-sonnet-4-6",
       "description": "Simple fixes, searches, small tasks, file operations, codebase exploration, documentation lookup",
-      "agents": [
-        "sisyphus-junior",
-        "explore",
-        "librarian"
-      ],
-      "alternatives": [
-        "gpt-5.3-codex-spark",
-        "gemini-3-flash"
-      ]
+      "agents": ["sisyphus-junior", "explore", "librarian"],
+      "alternatives": ["gpt-5.3-codex-spark", "gemini-3-flash"]
     },
     "deep": {
-      "model": "gpt-5.2-codex",
+      "model": "claude-opus-4-6-thinking",
       "description": "Complex refactoring, analysis, gap detection, plan review. Goal-oriented autonomous problem-solving.",
-      "agents": [
-        "hephaestus",
-        "metis",
-        "momus"
-      ],
-      "alternatives": [
-        "gpt-5.3-codex",
-        "gemini-3.1-pro"
-      ]
+      "agents": ["hephaestus", "metis", "momus"],
+      "alternatives": ["gpt-5.3-codex", "gemini-3.1-pro"]
     },
     "ultrabrain": {
-      "model": "gpt-5.2-codex",
+      "model": "gpt-5.3-codex",
       "description": "Deep logical reasoning, complex architecture decisions requiring extensive analysis",
-      "agents": [
-        "prometheus",
-        "atlas",
-        "oracle"
-      ],
-      "alternatives": [
-        "claude-opus-4-6-thinking",
-        "gemini-3.1-pro-high"
-      ]
+      "agents": ["prometheus", "atlas", "oracle"],
+      "alternatives": ["claude-opus-4-6-thinking", "gemini-3.1-pro-high"]
     },
     "visual-engineering": {
-      "model": "gpt-5.2-codex",
+      "model": "gemini-3.1-pro",
       "description": "Frontend, UI/UX, design, styling, animation, visual analysis",
-      "agents": [
-        "frontend",
-        "multimodal-looker"
-      ],
-      "alternatives": [
-        "claude-opus-4-6-thinking",
-        "gemini-2.5-pro"
-      ]
+      "agents": ["frontend", "multimodal-looker"],
+      "alternatives": ["claude-opus-4-6-thinking", "gemini-2.5-pro"]
     },
     "multimodal": {
-      "model": "gpt-5.2-codex",
+      "model": "gemini-3-flash",
       "description": "PDF/image/video analysis. Run via Gemini CLI tmux session.",
-      "agents": [
-        "multimodal-looker"
-      ],
+      "agents": ["multimodal-looker"],
       "tool": "gemini-cli",
-      "alternatives": [
-        "gemini-3.1-pro"
-      ]
+      "alternatives": ["gemini-3.1-pro"]
     },
     "artistry": {
-      "model": "gpt-5.2-codex",
+      "model": "claude-opus-4-6-thinking",
       "description": "Highly creative/artistic tasks, novel ideas, design exploration",
-      "alternatives": [
-        "gemini-3.1-pro"
-      ]
+      "alternatives": ["gemini-3.1-pro"]
     },
     "unspecified-low": {
-      "model": "gpt-5.2-codex",
+      "model": "claude-sonnet-4-6",
       "description": "Tasks that don't fit other categories, low effort required"
     },
     "unspecified-high": {
-      "model": "gpt-5.2-codex",
+      "model": "claude-opus-4-6-thinking",
       "description": "Tasks that don't fit other categories, high effort required"
     },
     "writing": {
-      "model": "gpt-5.2-codex",
+      "model": "claude-sonnet-4-6",
       "description": "Documentation, prose, technical writing",
-      "alternatives": [
-        "gemini-3.1-pro"
-      ]
+      "alternatives": ["gemini-3.1-pro"]
     }
   },
   "defaults": {
@@ -101,18 +66,9 @@
         "description": "OmO (OpenCode) coding agent — multiple concurrent execution possible (opencode, opencode-2, ...)",
         "default_agent": "sisyphus",
         "agents": {
-          "sisyphus": {
-            "switch": "default",
-            "description": "Quick implementation"
-          },
-          "hephaestus": {
-            "switch": "Tab x1",
-            "description": "Deep autonomous work"
-          },
-          "prometheus": {
-            "switch": "Tab x2",
-            "description": "Strategic planning"
-          }
+          "sisyphus": { "switch": "default", "description": "Quick implementation" },
+          "hephaestus": { "switch": "Tab x1", "description": "Deep autonomous work" },
+          "prometheus": { "switch": "Tab x2", "description": "Strategic planning" }
         },
         "startup": "export NODE_OPTIONS=\"--max-old-space-size=8192\" && cd $PROJECT_DIR && opencode",
         "ram_per_session": "2-4GB"
@@ -121,16 +77,8 @@
         "description": "Gemini CLI multimodal analysis — multiple concurrent execution possible (gemini, gemini-2, ...)",
         "default_model": "gemini-3-flash",
         "models": {
-          "gemini-3-flash": {
-            "flag": "-m gemini-3-flash",
-            "speed": "fast",
-            "description": "Quick verification"
-          },
-          "gemini-3.1-pro": {
-            "flag": "-m gemini-3.1-pro",
-            "speed": "medium",
-            "description": "Detailed analysis / highest quality"
-          }
+          "gemini-3-flash": { "flag": "-m gemini-3-flash", "speed": "fast", "description": "Quick verification" },
+          "gemini-3.1-pro": { "flag": "-m gemini-3.1-pro", "speed": "medium", "description": "Detailed analysis / highest quality" }
         },
         "ram_per_session": "~200MB"
       },
@@ -144,15 +92,7 @@
     },
     "naming_convention": {
       "_comment": "Session naming convention: {template}-{index} (e.g.: opencode-2, gemini-3)",
-      "examples": [
-        "opencode",
-        "opencode-2",
-        "opencode-auth",
-        "gemini",
-        "gemini-2",
-        "build",
-        "research"
-      ]
+      "examples": ["opencode", "opencode-2", "opencode-auth", "gemini", "gemini-2", "build", "research"]
     }
   },
   "todo_enforcer": {
@@ -161,132 +101,44 @@
   },
   "tool_restrictions": {
     "_comment": "Prompt-level guidance. For runtime enforcement, run: openclaw omoc-setup",
-    "oracle": {
-      "deny": [
-        "write",
-        "edit",
-        "apply_patch",
-        "sessions_spawn"
-      ]
-    },
-    "librarian": {
-      "deny": [
-        "write",
-        "edit",
-        "apply_patch",
-        "sessions_spawn"
-      ]
-    },
-    "explore": {
-      "deny": [
-        "write",
-        "edit",
-        "apply_patch",
-        "sessions_spawn"
-      ]
-    },
-    "multimodal-looker": {
-      "allow": [
-        "read",
-        "image",
-        "group:ui",
-        "exec"
-      ]
-    },
-    "metis": {
-      "deny": [
-        "write",
-        "edit",
-        "apply_patch",
-        "sessions_spawn"
-      ]
-    },
-    "momus": {
-      "deny": [
-        "write",
-        "edit",
-        "apply_patch",
-        "sessions_spawn"
-      ]
-    }
+    "oracle": { "deny": ["write", "edit", "apply_patch", "sessions_spawn"] },
+    "librarian": { "deny": ["write", "edit", "apply_patch", "sessions_spawn"] },
+    "explore": { "deny": ["write", "edit", "apply_patch", "sessions_spawn"] },
+    "multimodal-looker": { "allow": ["read", "image", "group:ui", "exec"] },
+    "metis": { "deny": ["write", "edit", "apply_patch", "sessions_spawn"] },
+    "momus": { "deny": ["write", "edit", "apply_patch", "sessions_spawn"] }
   },
   "skills": {
     "git-master": {
-      "trigger": [
-        "commit",
-        "rebase",
-        "squash",
-        "who wrote",
-        "when was",
-        "git history",
-        "blame"
-      ],
+      "trigger": ["commit", "rebase", "squash", "who wrote", "when was", "git history", "blame"],
       "path": "plugin/skills/git-master.md"
     },
     "frontend-ui-ux": {
-      "trigger": [
-        "UI",
-        "UX",
-        "frontend",
-        "design",
-        "styling",
-        "CSS",
-        "layout"
-      ],
+      "trigger": ["UI", "UX", "frontend", "design", "styling", "CSS", "layout"],
       "path": "plugin/skills/frontend-ui-ux.md"
     },
     "comment-checker": {
-      "trigger": [
-        "comment check",
-        "AI slop",
-        "code quality",
-        "clean comments"
-      ],
+      "trigger": ["comment check", "AI slop", "code quality", "clean comments"],
       "path": "plugin/skills/comment-checker.md"
     },
     "gemini-look-at": {
-      "trigger": [
-        "look at",
-        "PDF",
-        "screenshot",
-        "diagram",
-        "visual",
-        "image analysis"
-      ],
+      "trigger": ["look at", "PDF", "screenshot", "diagram", "visual", "image analysis"],
       "path": "plugin/skills/gemini-look-at.md"
     },
     "steering-words": {
-      "trigger": [
-        "ultrawork",
-        "search",
-        "analyze"
-      ],
+      "trigger": ["ultrawork", "search", "analyze"],
       "path": "plugin/skills/steering-words.md"
     },
     "delegation-prompt": {
-      "trigger": [
-        "delegate",
-        "sub-agent",
-        "delegation"
-      ],
+      "trigger": ["delegate", "sub-agent", "delegation"],
       "path": "plugin/skills/delegation-prompt.md"
     },
     "multimodal-analysis": {
-      "trigger": [
-        "multimodal",
-        "image analysis"
-      ],
+      "trigger": ["multimodal", "image analysis"],
       "path": "plugin/skills/multimodal-analysis.md"
     },
     "web-search": {
-      "trigger": [
-        "web search",
-        "search the web",
-        "look up",
-        "exa",
-        "context7",
-        "grep.app"
-      ],
+      "trigger": ["web search", "search the web", "look up", "exa", "context7", "grep.app"],
       "path": "plugin/skills/web-search.md"
     }
   }
