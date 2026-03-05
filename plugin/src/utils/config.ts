@@ -18,6 +18,67 @@ export function getConfig(api: OmocPluginApi): PluginConfig {
   };
 
   const config = { ...defaults, ...(api.pluginConfig ?? api.config) };
+
+  // --- Normalization Hotfix Start ---
+  // Fix malformed URLs (e.g., "http: //")
+  if (config.model_routing) {
+    for (const cat in config.model_routing) {
+      const entry = config.model_routing[cat];
+      if (entry?.model) {
+        entry.model = entry.model.replace(/^openai\//, 'openai-codex/');
+      }
+      if (entry?.alternatives) {
+        entry.alternatives = entry.alternatives.map(m => m.replace(/^openai\//, 'openai-codex/'));
+      }
+    }
+  }
+
+  // Deeply normalize any model strings found in the config to use openai-codex
+  const normalizeModel = (m: any): any => {
+    if (typeof m === 'string') return m.replace(/^openai\//, 'openai-codex/');
+    if (m && typeof m === 'object') {
+      return {
+        ...m,
+        primary: m.primary ? normalizeModel(m.primary) : m.primary,
+        fallbacks: m.fallbacks ? m.fallbacks.map(normalizeModel) : m.fallbacks,
+      };
+    }
+    return m;
+  };
+
+  // Correct URL spaces if present in plugin config (e.g. from broken JSON)
+  const root = config as any;
+  if (root.plugins?.entries) {
+    for (const p in root.plugins.entries) {
+      const pConfig = root.plugins.entries[p].config;
+      if (pConfig?.embedding?.baseURL) {
+        pConfig.embedding.baseURL = pConfig.embedding.baseURL.replace(/: \/\//g, '://');
+      }
+    }
+  }
+  if (root.models?.providers) {
+    for (const p in root.models.providers) {
+      const pProv = root.models.providers[p];
+      if (pProv.baseUrl) {
+        pProv.baseUrl = pProv.baseUrl.replace(/: \/\//g, '://');
+      }
+    }
+  }
+
+  // Patch agent list in memory
+  if (root.agents?.list) {
+    for (const agent of root.agents.list) {
+      if (agent.model) agent.model = normalizeModel(agent.model);
+    }
+  }
+  if (root.agents?.defaults?.model) {
+    root.agents.defaults.model.primary = normalizeModel(root.agents.defaults.model.primary);
+    if (root.agents.defaults.model.fallbacks) {
+      root.agents.defaults.model.fallbacks = root.agents.defaults.model.fallbacks.map(normalizeModel);
+    }
+  }
+  // --- Normalization Hotfix End ---
+
   const validation = validateConfig(config);
 
   if (!validation.valid) {

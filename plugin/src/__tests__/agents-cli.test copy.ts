@@ -575,18 +575,18 @@ describe('runSetup', () => {
     }
   });
 
-  it('should apply openai-codex provider preset', () => {
+  it('should apply openai provider preset', () => {
     const { dir, configPath } = createTempConfig('{"agents": {"list": []}}');
 
     try {
       const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
-      runSetup({ configPath, logger, provider: 'openai-codex' });
+      runSetup({ configPath, logger, provider: 'openai' });
 
       const config = parseConfig(fs.readFileSync(configPath, 'utf-8'));
       const prometheus = (config.agents?.list as Array<{ id: string; model?: any }>).find(
         (a) => a.id === 'omoc_prometheus',
       );
-      expect(prometheus?.model?.primary).toBe('openai-codex/gpt-5.2-codex');
+      expect(prometheus?.model?.primary).toBe('openai/gpt-5.3-codex');
     } finally {
       fs.rmSync(dir, { recursive: true });
     }
@@ -609,7 +609,7 @@ describe('runSetup', () => {
 
 describe('model-presets', () => {
   it('should have 3 provider presets', () => {
-    expect(getProviderNames()).toEqual(['anthropic', 'openai-codex', 'google']);
+    expect(getProviderNames()).toEqual(['anthropic', 'openai', 'google']);
   });
 
   it('should have all 11 agents mapped to tiers', () => {
@@ -656,7 +656,7 @@ describe('applyProviderToConfigs', () => {
   });
 
   it('preserves non-model fields', () => {
-    const modified = applyProviderToConfigs(OMOC_AGENT_CONFIGS, 'openai-codex');
+    const modified = applyProviderToConfigs(OMOC_AGENT_CONFIGS, 'openai');
     const oracle = modified.find((a) => a.id === 'omoc_oracle');
     expect(oracle?.identity?.name).toBe('Oracle');
     expect(oracle?.tools?.deny).toContain('write');

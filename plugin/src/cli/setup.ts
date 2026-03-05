@@ -506,7 +506,7 @@ export function registerSetupCli(ctx: {
     .option('--force', 'Overwrite existing OmOC agent configs', false)
     .option('--dry-run', 'Preview changes without writing', false)
     .option('--config <path>', 'Path to OpenClaw config file')
-    .option('--provider <name>', 'AI provider preset: anthropic, openai, google (skips interactive)')
+    .option('--provider <name>', 'AI provider preset: anthropic, openai-codex, google (skips interactive)')
     .action(async (...args: unknown[]) => {
       const opts = (args[0] ?? {}) as {
         force?: boolean;
