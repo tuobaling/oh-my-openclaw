@@ -19,7 +19,7 @@ import { PLANNER_DENY } from '../constants.js';
 
 type AgentsSection = {
   defaults?: Record<string, unknown>;
-  list?: Array<{ id: string; [key: string]: unknown }>;
+  list?: Array<{ id: string;[key: string]: unknown }>;
 };
 
 type ConfigShape = {
@@ -132,10 +132,10 @@ export interface MergeResult {
 }
 
 export function mergeAgentConfigs(
-  existing: Array<{ id: string; [key: string]: unknown }>,
+  existing: Array<{ id: string;[key: string]: unknown }>,
   incoming: OmocAgentConfig[],
   force: boolean,
-): { merged: Array<{ id: string; [key: string]: unknown }>; result: MergeResult } {
+): { merged: Array<{ id: string;[key: string]: unknown }>; result: MergeResult } {
   const result: MergeResult = { added: [], skipped: [], updated: [] };
   const merged = [...existing];
   const existingIds = new Set(existing.map((a) => a.id));
@@ -145,14 +145,14 @@ export function mergeAgentConfigs(
       if (force) {
         const idx = merged.findIndex((a) => a.id === agent.id);
         if (idx !== -1) {
-          merged[idx] = agent as { id: string; [key: string]: unknown };
+          merged[idx] = agent as { id: string;[key: string]: unknown };
           result.updated.push(agent.id);
         }
       } else {
         result.skipped.push(agent.id);
       }
     } else {
-      merged.push(agent as { id: string; [key: string]: unknown });
+      merged.push(agent as { id: string;[key: string]: unknown });
       result.added.push(agent.id);
     }
   }
@@ -215,9 +215,9 @@ async function runCustomProviderFlow(
   rl: readline.Interface,
   logger: Logger,
 ): Promise<string> {
-    logger.info('');
-    logger.info('Step 1/3: Select your AI provider');
-    logger.info('');
+  logger.info('');
+  logger.info('Step 1/3: Select your AI provider');
+  logger.info('');
 
   const tierModels = {} as Record<ModelTier, string>;
 
@@ -372,7 +372,7 @@ export interface SetupOptions {
 }
 
 export function applyPlannerGuard(
-  agentList: Array<{ id: string; tools?: { deny?: string[]; [key: string]: unknown }; [key: string]: unknown }>,
+  agentList: Array<{ id: string; tools?: { deny?: string[];[key: string]: unknown };[key: string]: unknown }>,
 ): void {
   for (const agent of agentList) {
     if (agent.id === 'omoc_prometheus') {
@@ -393,8 +393,8 @@ export function runSetup(options: SetupOptions): MergeResult {
   if (!configPath) {
     throw new Error(
       'Could not find OpenClaw config file. Searched for: ' +
-        CONFIG_FILENAMES.join(', ') +
-        '\nSpecify the path with --config <path>',
+      CONFIG_FILENAMES.join(', ') +
+      '\nSpecify the path with --config <path>',
     );
   }
 
@@ -409,7 +409,7 @@ export function runSetup(options: SetupOptions): MergeResult {
   if (configPath.endsWith('.yaml') || configPath.endsWith('.yml')) {
     throw new Error(
       'YAML config files are not supported by omoc-setup. ' +
-        'Please convert to JSON or JSON5, or manually add agent configs.',
+      'Please convert to JSON or JSON5, or manually add agent configs.',
     );
   }
 
@@ -466,12 +466,13 @@ export function runSetup(options: SetupOptions): MergeResult {
   }
 
   if (options.enableTodoEnforcer !== undefined) {
-    const pluginSettings = ((config as Record<string, unknown>).pluginSettings ?? {}) as Record<string, Record<string, unknown>>;
-    if (!pluginSettings['oh-my-openclaw']) {
-      pluginSettings['oh-my-openclaw'] = {};
-    }
-    pluginSettings['oh-my-openclaw']['todo_enforcer_enabled'] = options.enableTodoEnforcer;
-    (config as Record<string, unknown>).pluginSettings = pluginSettings;
+    const root = config as Record<string, any>;
+    if (!root.plugins) root.plugins = {};
+    if (!root.plugins.entries) root.plugins.entries = {};
+    if (!root.plugins.entries['oh-my-openclaw']) root.plugins.entries['oh-my-openclaw'] = { enabled: true };
+    if (!root.plugins.entries['oh-my-openclaw'].config) root.plugins.entries['oh-my-openclaw'].config = {};
+
+    root.plugins.entries['oh-my-openclaw'].config.todo_enforcer_enabled = options.enableTodoEnforcer;
     if (!dryRun) {
       fs.writeFileSync(configPath, serializeConfig(config), 'utf-8');
     }

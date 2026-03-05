@@ -348,7 +348,7 @@ describe('runSetup', () => {
     return { dir, configPath };
   }
 
-  afterEach(() => {});
+  afterEach(() => { });
 
   it('should create backup file before writing', () => {
     const { dir, configPath } = createTempConfig('{"agents": {"list": []}}');
@@ -930,7 +930,7 @@ describe('mcporter-setup', () => {
   });
 
   describe('runSetup with enableTodoEnforcer', () => {
-    it('should write todo_enforcer_enabled=true to pluginSettings', () => {
+    it('should write todo_enforcer_enabled=true to plugins entries config', () => {
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'omoc-todo-test-'));
       const configPath = path.join(dir, 'openclaw.json');
       fs.writeFileSync(configPath, '{"agents": {"list": []}}');
@@ -940,14 +940,14 @@ describe('mcporter-setup', () => {
         runSetup({ configPath, logger, enableTodoEnforcer: true });
 
         const config = parseConfig(fs.readFileSync(configPath, 'utf-8'));
-        const ps = (config as any).pluginSettings?.['oh-my-openclaw'];
+        const ps = (config as any).plugins?.entries?.['oh-my-openclaw']?.config;
         expect(ps?.todo_enforcer_enabled).toBe(true);
       } finally {
         fs.rmSync(dir, { recursive: true });
       }
     });
 
-    it('should write todo_enforcer_enabled=false to pluginSettings', () => {
+    it('should write todo_enforcer_enabled=false to plugins entries config', () => {
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'omoc-todo-test-'));
       const configPath = path.join(dir, 'openclaw.json');
       fs.writeFileSync(configPath, '{"agents": {"list": []}}');
@@ -957,14 +957,14 @@ describe('mcporter-setup', () => {
         runSetup({ configPath, logger, enableTodoEnforcer: false });
 
         const config = parseConfig(fs.readFileSync(configPath, 'utf-8'));
-        const ps = (config as any).pluginSettings?.['oh-my-openclaw'];
+        const ps = (config as any).plugins?.entries?.['oh-my-openclaw']?.config;
         expect(ps?.todo_enforcer_enabled).toBe(false);
       } finally {
         fs.rmSync(dir, { recursive: true });
       }
     });
 
-    it('should not write pluginSettings when enableTodoEnforcer is undefined', () => {
+    it('should not write plugins entries config when enableTodoEnforcer is undefined', () => {
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'omoc-todo-test-'));
       const configPath = path.join(dir, 'openclaw.json');
       fs.writeFileSync(configPath, '{"agents": {"list": []}}');
@@ -974,25 +974,25 @@ describe('mcporter-setup', () => {
         runSetup({ configPath, logger });
 
         const config = parseConfig(fs.readFileSync(configPath, 'utf-8'));
-        expect((config as any).pluginSettings).toBeUndefined();
+        expect((config as any).plugins?.entries?.['oh-my-openclaw']?.config?.todo_enforcer_enabled).toBeUndefined();
       } finally {
         fs.rmSync(dir, { recursive: true });
       }
     });
 
-    it('should preserve existing pluginSettings', () => {
+    it('should preserve existing plugins entries config', () => {
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'omoc-todo-test-'));
       const configPath = path.join(dir, 'openclaw.json');
-      fs.writeFileSync(configPath, '{"agents": {"list": []}, "pluginSettings": {"other-plugin": {"key": "val"}}}');
+      fs.writeFileSync(configPath, '{"agents": {"list": []}, "plugins": {"entries": {"other-plugin": {"config": {"key": "val"}}}}}');
 
       try {
         const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
         runSetup({ configPath, logger, enableTodoEnforcer: true });
 
         const config = parseConfig(fs.readFileSync(configPath, 'utf-8'));
-        const ps = (config as any).pluginSettings;
-        expect(ps?.['other-plugin']?.key).toBe('val');
-        expect(ps?.['oh-my-openclaw']?.todo_enforcer_enabled).toBe(true);
+        const entries = (config as any).plugins?.entries;
+        expect(entries?.['other-plugin']?.config?.key).toBe('val');
+        expect(entries?.['oh-my-openclaw']?.config?.todo_enforcer_enabled).toBe(true);
       } finally {
         fs.rmSync(dir, { recursive: true });
       }
